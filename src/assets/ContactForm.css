@@ -1,7 +1,7 @@
 /* Styles for the Contact Form .contact-form and children label and input */
 
 .contact-form {
-  background-color: #000;
+  background-color: #888;
   color: #fff;
   font-size: 1.2em;
   font-weight: 600;
@@ -14,3 +14,61 @@
   margin: 0.5em 0;
 }
 
+.contact-form input {
+  font-size: 1em;
+  margin: 0.5em 0;
+}
+
+/* Submit button style */
+
+.contact-form button[type="submit"] {
+  background-color: #fff;
+  border: 0;
+  color: #333;
+  cursor: pointer;
+  font-weight: 600;
+  margin: 0.5em 0;
+  padding: 0.5em 1em;
+}
+
+/* Place button at the end */
+
+.contact-form button[type="submit"] {
+  margin-left: auto;
+  margin-right: 0;
+}
+
+/* Hover style for the button */
+
+.contact-form button[type="submit"]:hover {
+  background-color: #333;
+  color: #fff;
+}
+
+/* Style for the form and everything to be ordered */
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+}
+
+/* Limit the width of the inputs */
+
+.contact-form input {
+  max-width: 300px;
+}
+ 
+/* Center the inputs */
+
+.contact-form input {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Center the submit button */
+
+.contact-form button[type="submit"] {
+  margin-left: auto;
+  margin-right: auto;
+}

@@ -2,7 +2,7 @@
 
 .top-navbar {
   background-color: #fff;
-  color: #000;
+  color: #333;
   font-size: 1.2em;
   font-weight: 600;
   padding: 0.5em 0;
@@ -21,12 +21,12 @@
 }
 
 .top-navbar a {
-  color: #000;
+  color: #333;
   text-decoration: none;
 }
 
 .top-navbar a:hover {
-  color: #000;
+  color: #333;
   text-decoration: underline;
 }
 
