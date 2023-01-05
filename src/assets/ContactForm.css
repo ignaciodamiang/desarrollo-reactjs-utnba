@@ -1,0 +1,16 @@
+/* Styles for the Contact Form .contact-form and children label and input */
+
+.contact-form {
+  background-color: #000;
+  color: #fff;
+  font-size: 1.2em;
+  font-weight: 600;
+  padding: 0.5em 0;
+  text-align: center;
+}
+
+.contact-form label {
+  display: block;
+  margin: 0.5em 0;
+}
+

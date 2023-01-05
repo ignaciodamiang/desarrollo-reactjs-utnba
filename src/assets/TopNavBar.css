@@ -1,0 +1,32 @@
+/* light theme style for the top navbar ".top-navbar" and children ul/li/a */
+
+.top-navbar {
+  background-color: #fff;
+  color: #000;
+  font-size: 1.2em;
+  font-weight: 600;
+  padding: 0.5em 0;
+  text-align: center;
+}
+
+.top-navbar ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.top-navbar li {
+  display: inline-block;
+  margin: 0 0.5em;
+}
+
+.top-navbar a {
+  color: #000;
+  text-decoration: none;
+}
+
+.top-navbar a:hover {
+  color: #000;
+  text-decoration: underline;
+}
+
