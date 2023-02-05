@@ -1,0 +1,29 @@
+.main-container {
+    margin: auto 100px;
+}
+
+.product {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px 0;
+}
+
+.button a {
+    border: none;
+    color: white;
+    text-align: center;
+}
+
+body {
+    margin: 0;
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+}
+
+main {
+    display: block;
+    flex: 1 0 auto;
+}

@@ -1,17 +1,20 @@
+import { Link } from 'react-router-dom';
 export function TopNavBar() {
   return (
     <nav className='top-navbar'>
       <ul>
         <li>
-          <a href='#'>Home</a>
+          <Link to='/'>Home</Link>
         </li>
         <li>
-          <a href='#'>About</a>
+          <Link to='/registry'>Register</Link>
         </li>
         <li>
-          <a href='#'>Contact</a>
+          <Link to='/login'>Login</Link>
         </li>
       </ul>
     </nav>
   );
 }
+
+export default TopNavBar;

@@ -1,17 +1,19 @@
-import logo from './logo.svg';
 import './App.css';
 import './assets/TopNavBar.css';
-import './assets/ContactForm.css';
-import { ContactForm } from './components/ContactForm';
-import { TopNavBar } from './components/TopNavBar';
+import './assets/Footer.css';
+import { Footer } from './components/Footer';
+import { BrowserRouter as Router } from 'react-router-dom';
+import Public from './routes/Public';
 
 function App() {
   return (
     <div className='App'>
-      <TopNavBar />
-      <main>
-        <ContactForm />
-      </main>
+      <div className='main-container'>
+        <Router>
+          <Public />
+        </Router>
+      </div>
+      {/* <Footer /> */}
     </div>
   );
 }
