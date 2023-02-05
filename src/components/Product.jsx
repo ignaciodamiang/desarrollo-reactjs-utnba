@@ -4,7 +4,7 @@ function Product({ id, title, price, domain_id, thumbnail, buy }) {
     <div className='product'>
       <h2>{title}</h2>
       <img src={thumbnail} alt='' />
-      <p>{price}</p>
+      <p>${price}</p>
       <p>{domain_id}</p>
       <button className='button' onClick={buy}>
         Buy
