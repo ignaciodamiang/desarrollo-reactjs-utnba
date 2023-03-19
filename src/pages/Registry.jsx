@@ -1,5 +1,10 @@
 import { useForm } from 'react-hook-form';
 import Input from '../components/Input';
+import { Button, Form } from 'react-bootstrap';
+import firebase from '../config/firebase';
+import { useState } from 'react';
+import CustomAlert from '../components/CustomAlert';
+import LoadingButton from '../components/LoadingButton';
 
 function Registry() {
   const {
@@ -7,24 +12,61 @@ function Registry() {
     handleSubmit,
     formState: { errors },
   } = useForm({ mode: 'onChange' });
-  const onSubmit = (data) => {
+  const [alert, setAlert] = useState({ variant: '', text: '' });
+  const [loading, setLoading] = useState(false);
+
+  const onSubmit = async (data) => {
+    setLoading(true);
     console.log(data);
+    try {
+      const responseUser = await firebase
+        .auth()
+        .createUserWithEmailAndPassword(data.email, data.password);
+      console.log(
+        '🚀 ~ file: Registry.jsx:19 ~ onSubmit ~ responseUser',
+        responseUser
+      );
+      if (responseUser.user.uid) {
+        const document = await firebase.firestore().collection('usuarios').add({
+          nombre: data.nombre,
+          apellido: data.apellido,
+          userId: responseUser.user.uid,
+        });
+        console.log(
+          '🚀 ~ file: Registry.jsx:30 ~ onSubmit ~ document',
+          document
+        );
+        if (document) {
+          setAlert({
+            variant: 'success',
+            text: 'Gracias por registrarse',
+            duration: 3000,
+            link: '/ingresar',
+          });
+          setLoading(false);
+        }
+      }
+    } catch (e) {
+      console.log(e);
+      setAlert({ variant: 'danger', text: 'Ha ocurrido un error' });
+      setLoading(false);
+    }
   };
 
   return (
     <div>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <Form onSubmit={handleSubmit(onSubmit)}>
         <Input
-          label='Name'
-          register={{ ...register('name', { required: true }) }}
+          label='Nombre'
+          register={{ ...register('nombre', { required: true }) }}
         />
-        {errors.name && (
+        {errors.nombre && (
           <div>
             <span>This field is required</span>
           </div>
         )}
 
-        <Input label='Last Name' register={{ ...register('lastName') }} />
+        <Input label='Apellido' register={{ ...register('apellido') }} />
 
         <Input
           label='Email'
@@ -37,10 +79,10 @@ function Registry() {
           </div>
         )}
         <Input
-          label='Password'
+          label='Contraseña'
           type='password'
           register={{
-            ...register('password', { required: true, minLength: 6 }),
+            ...register('password', { required: true, minLength: 1 }),
           }}
         />
         {errors.password && (
@@ -49,12 +91,22 @@ function Registry() {
               <span>This field is required</span>
             )}
             {errors.password?.type === 'minLength' && (
-              <span>At least it has to have 6 characters</span>
+              <span>Debe completar al menos 6 caracteres</span>
             )}
           </div>
         )}
-        <button type='submit'>Register</button>
-      </form>
+
+        <LoadingButton type='submit' variant='primary' loading={loading}>
+          Registrarse
+        </LoadingButton>
+      </Form>
+      <CustomAlert
+        // variant={alert.variant}
+        // text={alert.text}
+        // duration={alert.duration}
+        // link={alert.link}
+        {...alert}
+      />
     </div>
   );
 }
