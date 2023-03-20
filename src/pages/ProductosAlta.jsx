@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Input from '../components/Input';
 import { Button, Form } from 'react-bootstrap';
-import firebase from '../config/firebase';
+import { firebase } from '../config/firebase';
 import { useNavigate } from 'react-router-dom';
 import { create } from '../services/productsService';
 

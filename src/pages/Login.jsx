@@ -1,5 +1,10 @@
 import { useForm } from 'react-hook-form';
 import Input from '../components/Input';
+import { Button, Form } from 'react-bootstrap';
+import firebase from '../config/firebase';
+import { useNavigate } from 'react-router-dom';
+import { useAuthContext } from '../context/AuthContext';
+import { getByUserId } from '../services/usuariosServices';
 
 function Login() {
   const {
@@ -7,17 +12,33 @@ function Login() {
     handleSubmit,
     formState: { errors },
   } = useForm({ mode: 'onChange' });
-  const onSubmit = (data) => {
-    console.log(data);
+  const { handleLogin } = useAuthContext();
+
+  const navigate = useNavigate();
+
+  const onSubmit = async (data) => {
+    try {
+      const responseUser = await firebase
+        .auth()
+        .signInWithEmailAndPassword(data.email, data.password);
+      if (responseUser.user.uid) {
+        const user = await getByUserId(responseUser.user.uid);
+        handleLogin(user.docs[0].data());
+
+        navigate('/');
+      }
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   return (
     <div>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <Form onSubmit={handleSubmit(onSubmit)}>
         <Input
           label='Email'
           type='email'
-          login={{ ...register('email', { required: true }) }}
+          register={{ ...register('email', { required: true }) }}
         />
         {errors.email && (
           <div>
@@ -25,10 +46,10 @@ function Login() {
           </div>
         )}
         <Input
-          label='Password'
+          label='Contraseña'
           type='password'
-          login={{
-            ...register('password', { required: true, minLength: 6 }),
+          register={{
+            ...register('password', { required: true, minLength: 1 }),
           }}
         />
         {errors.password && (
@@ -36,10 +57,15 @@ function Login() {
             {errors.password?.type === 'required' && (
               <span>This field is required</span>
             )}
+            {errors.password?.type === 'minLength' && (
+              <span>Debe completar al menos 6 caracteres</span>
+            )}
           </div>
         )}
-        <button type='submit'>Login</button>
-      </form>
+        <Button type='submit' variant='primary'>
+          Ingresar
+        </Button>
+      </Form>
     </div>
   );
 }

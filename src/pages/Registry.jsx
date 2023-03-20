@@ -1,12 +1,15 @@
 import { useForm } from 'react-hook-form';
 import Input from '../components/Input';
-import { Button, Form } from 'react-bootstrap';
+import { Form } from 'react-bootstrap';
 import firebase from '../config/firebase';
 import { useState } from 'react';
 import CustomAlert from '../components/CustomAlert';
 import LoadingButton from '../components/LoadingButton';
+import { createUserDocument } from '../services/usuariosServices';
+import { useAuthContext } from '../context/AuthContext';
 
 function Registry() {
+  const { handleLogin } = useAuthContext();
   const {
     register,
     handleSubmit,
@@ -26,10 +29,13 @@ function Registry() {
         '🚀 ~ file: Registry.jsx:19 ~ onSubmit ~ responseUser',
         responseUser
       );
+      const user = responseUser.user;
+      await createUserDocument(user);
+
       if (responseUser.user.uid) {
-        const document = await firebase.firestore().collection('usuarios').add({
-          nombre: data.nombre,
-          apellido: data.apellido,
+        const document = await firebase.firestore().collection('users').add({
+          name: data.name,
+          lastname: data.lastname,
           userId: responseUser.user.uid,
         });
         console.log(
@@ -41,9 +47,12 @@ function Registry() {
             variant: 'success',
             text: 'Gracias por registrarse',
             duration: 3000,
-            link: '/ingresar',
+            link: '/login',
           });
           setLoading(false);
+
+          // Call handleLogin with email and password
+          handleLogin(data.email, data.password);
         }
       }
     } catch (e) {
@@ -58,15 +67,15 @@ function Registry() {
       <Form onSubmit={handleSubmit(onSubmit)}>
         <Input
           label='Nombre'
-          register={{ ...register('nombre', { required: true }) }}
+          register={{ ...register('name', { required: true }) }}
         />
-        {errors.nombre && (
+        {errors.name && (
           <div>
             <span>This field is required</span>
           </div>
         )}
 
-        <Input label='Apellido' register={{ ...register('apellido') }} />
+        <Input label='Apellido' register={{ ...register('lastname') }} />
 
         <Input
           label='Email'

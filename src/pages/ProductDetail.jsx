@@ -31,6 +31,7 @@ function ProductDetail() {
   return (
     <div>
       <h1>{product.title}</h1>
+      <h2>SKU: {product.id}</h2>
       <p>{description.plain_text}</p>
       <p>$ {product.price}</p>
       <p>{product.warranty}</p>

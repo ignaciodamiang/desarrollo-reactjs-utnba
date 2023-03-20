@@ -1,30 +1,52 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from 'react';
+import firebase from '../config/firebase';
 
 export const AuthContext = React.createContext();
 
 const AuthProvider = ({ children }) => {
-  const [login, setLogin] = useState(
-    localStorage.getItem("login") ? true : false
-  );
-  const [user, setUser] = useState(
-    JSON.parse(localStorage.getItem("user")) || {}
-  );
+  const [login, setLogin] = useState(false);
+  const [user, setUser] = useState(null);
 
-  const handleLogin = (userInfo) => {
-    localStorage.setItem("login", "true");
-    // sessionStorage.setItem("login","true")
-    setLogin(true);
-    if (userInfo) {
-      setUser(userInfo);
-      localStorage.setItem("user", JSON.stringify(userInfo));
+  useEffect(() => {
+    const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        setUser(user);
+        setLogin(true);
+      } else {
+        setUser(null);
+        setLogin(false);
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
+  const handleLogin = async (email, password) => {
+    try {
+      const response = await firebase
+        .auth()
+        .signInWithEmailAndPassword(email, password);
+      setUser(response.user);
+      setLogin(true);
+    } catch (error) {
+      console.error('Error during login:', error);
+      // Handle errors here (e.g., show a message to the user)
     }
   };
-  const handleLogout = () => {
-    localStorage.removeItem("login");
-    localStorage.removeItem("user");
-    setLogin(false);
+
+  const handleLogout = async () => {
+    try {
+      await firebase.auth().signOut();
+      setUser(null);
+      setLogin(false);
+    } catch (error) {
+      console.error('Error during logout:', error);
+      // Handle errors here (e.g., show a message to the user)
+    }
   };
-  const getData = () => {};
+
   return (
     <AuthContext.Provider value={{ login, handleLogin, handleLogout, user }}>
       {children}

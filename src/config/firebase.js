@@ -1,21 +1,16 @@
-// Import the required functions and features from Firebase SDK
-import { initializeApp } from 'firebase/app';
-import { getFirestore } from 'firebase/firestore';
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+import 'firebase/compat/firestore';
 
-// Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: 'AIzaSyBrvB19Ym-KM9nXNM48Bu0EgkIWYlkv0jo',
-  authDomain: 'plated-monolith-299304.firebaseapp.com',
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+  authDomain: process.env.REACT_APP_AUTH_DOMAIN,
   projectId: 'plated-monolith-299304',
   storageBucket: 'plated-monolith-299304.appspot.com',
   messagingSenderId: '146312706284',
   appId: '1:146312706284:web:91a399adec39cb2f56cdc9',
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+firebase.initializeApp(firebaseConfig);
 
-// Initialize Firestore
-const firestore = getFirestore(app);
-
-export default firestore;
+export default firebase;
