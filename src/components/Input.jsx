@@ -1,9 +1,10 @@
 function Input({ label, type = 'text', name, placeholder = '', register }) {
   return (
-    <div>
-      <label>{label}</label>
+    <div className='mb-3'>
+      <label className='form-label'>{label}</label>
       <input
-        className='input-box'
+        // size sm
+        className='input-box form-control'
         type={type}
         name={name}
         placeholder={placeholder}

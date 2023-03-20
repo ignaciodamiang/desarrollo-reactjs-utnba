@@ -10,7 +10,12 @@ function LoadingButton({
 }) {
   return (
     /* */
-    <Button type={type} variant={variant} disabled={loading}>
+    <Button
+      className='w-100 mb-2'
+      type={type}
+      variant={variant}
+      disabled={loading}
+    >
       {loading && <Spinner animation='border' size='sm' />}
       {children}
     </Button>

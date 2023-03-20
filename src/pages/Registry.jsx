@@ -5,11 +5,16 @@ import firebase from '../config/firebase';
 import { useState } from 'react';
 import CustomAlert from '../components/CustomAlert';
 import LoadingButton from '../components/LoadingButton';
-import { createUserDocument } from '../services/usuariosServices';
+import { sendEmailVerification } from '../services/usuariosServices';
+
 import { useAuthContext } from '../context/AuthContext';
+import { Navigate } from 'react-router-dom';
+import Col from 'react-bootstrap/Col';
+import Row from 'react-bootstrap/Row';
+import Container from 'react-bootstrap/Container';
 
 function Registry() {
-  const { handleLogin } = useAuthContext();
+  const { handleLogin, login } = useAuthContext();
   const {
     register,
     handleSubmit,
@@ -18,6 +23,8 @@ function Registry() {
   const [alert, setAlert] = useState({ variant: '', text: '' });
   const [loading, setLoading] = useState(false);
 
+  if (login) return <Navigate replace to='/' />;
+
   const onSubmit = async (data) => {
     setLoading(true);
     console.log(data);
@@ -25,23 +32,18 @@ function Registry() {
       const responseUser = await firebase
         .auth()
         .createUserWithEmailAndPassword(data.email, data.password);
-      console.log(
-        '🚀 ~ file: Registry.jsx:19 ~ onSubmit ~ responseUser',
-        responseUser
-      );
       const user = responseUser.user;
-      await createUserDocument(user);
 
       if (responseUser.user.uid) {
-        const document = await firebase.firestore().collection('users').add({
-          name: data.name,
-          lastname: data.lastname,
-          userId: responseUser.user.uid,
-        });
-        console.log(
-          '🚀 ~ file: Registry.jsx:30 ~ onSubmit ~ document',
-          document
-        );
+        const document = await firebase
+          .firestore()
+          .collection('users')
+          .doc(user.uid)
+          .set({
+            name: data.name,
+            lastname: data.lastname,
+            userId: responseUser.user.uid,
+          });
         if (document) {
           setAlert({
             variant: 'success',
@@ -54,6 +56,7 @@ function Registry() {
           // Call handleLogin with email and password
           handleLogin(data.email, data.password);
         }
+        await sendEmailVerification(user);
       }
     } catch (e) {
       console.log(e);
@@ -64,51 +67,77 @@ function Registry() {
 
   return (
     <div>
-      <Form onSubmit={handleSubmit(onSubmit)}>
-        <Input
-          label='Nombre'
-          register={{ ...register('name', { required: true }) }}
-        />
-        {errors.name && (
-          <div>
-            <span>This field is required</span>
-          </div>
-        )}
+      <Form
+        className='justify-content-center'
+        onSubmit={handleSubmit(onSubmit)}
+      >
+        <Container className='w-75' fluid>
+          <h2 className='text-black-50 my-4'>Registry</h2>
+          <Row className='justify-content-center'>
+            <Col lg='5'>
+              <Input
+                label='Nombre'
+                register={{ ...register('name', { required: true }) }}
+              />
+            </Col>
+          </Row>
 
-        <Input label='Apellido' register={{ ...register('lastname') }} />
+          <Row className='justify-content-center'>
+            <Col lg='5'>
+              <Input label='Apellido' register={{ ...register('lastname') }} />
+            </Col>
+          </Row>
 
-        <Input
-          label='Email'
-          type='email'
-          register={{ ...register('email', { required: true }) }}
-        />
-        {errors.email && (
-          <div>
-            <span>This field is required</span>
-          </div>
-        )}
-        <Input
-          label='Contraseña'
-          type='password'
-          register={{
-            ...register('password', { required: true, minLength: 1 }),
-          }}
-        />
-        {errors.password && (
-          <div>
-            {errors.password?.type === 'required' && (
-              <span>This field is required</span>
-            )}
-            {errors.password?.type === 'minLength' && (
-              <span>Debe completar al menos 6 caracteres</span>
-            )}
-          </div>
-        )}
+          <Row className='justify-content-center'>
+            <Col lg='5'>
+              <Input
+                label='Email'
+                type='email'
+                register={{ ...register('email', { required: true }) }}
+              />
+            </Col>
+          </Row>
 
-        <LoadingButton type='submit' variant='primary' loading={loading}>
-          Registrarse
-        </LoadingButton>
+          <Row className='justify-content-center'>
+            <Col lg='5'>
+              <Input
+                label='Contraseña'
+                type='password'
+                register={{
+                  ...register('password', { required: true, minLength: 6 }),
+                }}
+              />
+            </Col>
+          </Row>
+          <Row className='justify-content-center'>
+            <Col lg='5'>
+              <LoadingButton type='submit' variant='primary' loading={loading}>
+                Registrarse
+              </LoadingButton>
+            </Col>
+          </Row>
+        </Container>
       </Form>
+      {errors.name && (
+        <div className='text-danger'>
+          <span>Name field is required</span>
+        </div>
+      )}
+      {errors.email && (
+        <div className='text-danger'>
+          <span>Email field is required</span>
+        </div>
+      )}
+      {errors.password && (
+        <div className='text-danger'>
+          {errors.password?.type === 'required' && (
+            <span>Password field is required</span>
+          )}
+          {errors.password?.type === 'minLength' && (
+            <span>Password must be at least 6 characters long</span>
+          )}
+        </div>
+      )}
       <CustomAlert
         // variant={alert.variant}
         // text={alert.text}

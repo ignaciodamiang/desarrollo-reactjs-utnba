@@ -21,4 +21,16 @@ export async function createUserDocument(user) {
     // ... any other user data you want to store
   };
   await userRef.set(userData);
+
+  // Call the sendEmailVerification function after creating the user document
+  await sendEmailVerification(user);
+}
+
+export async function sendEmailVerification(user) {
+  try {
+    await firebase.auth().currentUser.sendEmailVerification();
+    console.log('Email verification sent to:', user.email);
+  } catch (error) {
+    console.error('Error sending email verification:', error);
+  }
 }
